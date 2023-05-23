@@ -1,17 +1,22 @@
 import React from "react"
 import ReactDOM from "react-dom/client"
+// custom React components
+import Header from "./components/Header"
+import HomeGuest from "./components/HomeGuest"
+import Footer from "./components/Footer"
 
-function ExampleComponent() {
+function MainComponent() {
   return (
-    <div>
-      <h1>our app</h1>
-      <p>sky is blue w/ white clouds</p>
-    </div>
+    <>
+      <Header />
+      <HomeGuest />
+      <Footer />
+    </>
   )
 }
 
 const root = ReactDOM.createRoot(document.querySelector("#app"))
-root.render(<ExampleComponent />)
+root.render(<MainComponent />)
 
 // load js asynchronously for dev
 if (module.hot) {
