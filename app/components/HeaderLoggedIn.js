@@ -3,9 +3,9 @@ import React, { useEffect } from "react"
 function HeaderLoggedIn(props) {
   function handleLogout() {
     props.setLoggedIn(false)
-    localStorage.removeItem("token")
+    localStorage.removeItem("userToken")
     localStorage.removeItem("username")
-    localStorage.removeItem("avatar")
+    localStorage.removeItem("userAvatar")
   }
 
   return (
@@ -18,7 +18,7 @@ function HeaderLoggedIn(props) {
         <span className='chat-count-badge text-white'> </span>
       </span>
       <a href='#' className='mr-2'>
-        <img className='small-header-avatar' src={localStorage.getItem("avatar")} />
+        <img className='small-header-avatar' src={localStorage.getItem("userAvatar")} />
       </a>
       <a className='btn btn-sm btn-success mr-2' href='/create-post'>
         Create Post
