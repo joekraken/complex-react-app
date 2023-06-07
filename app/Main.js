@@ -12,6 +12,7 @@ import Footer from "./components/Footer"
 import About from "./components/About"
 import Terms from "./components/Terms"
 import CreatePost from "./components/CreatePost"
+import ViewSinglePost from "./components/ViewSinglePost"
 
 function MainComponent() {
   const exist = Boolean(localStorage.getItem("userToken")) && Boolean(localStorage.getItem("username")) && Boolean(localStorage.getItem("userAvatar"))
@@ -24,6 +25,7 @@ function MainComponent() {
         <Route path='/about-us' element={<About />} />
         <Route path='/terms' element={<Terms />} />
         <Route path='/create-post' element={<CreatePost />} />
+        <Route path='/post/:id' element={<ViewSinglePost />} />
       </Routes>
       <Footer />
     </BrowserRouter>
