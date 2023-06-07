@@ -1,6 +1,8 @@
 import React, { useState } from "react"
 import ReactDOM from "react-dom/client"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
+import Axios from "axios"
+Axios.defaults.baseURL = "http://localhost:8080"
 
 // custom React components
 import Header from "./components/Header"
@@ -9,11 +11,11 @@ import Home from "./components/Home"
 import Footer from "./components/Footer"
 import About from "./components/About"
 import Terms from "./components/Terms"
+import CreatePost from "./components/CreatePost"
 
 function MainComponent() {
   const exist = Boolean(localStorage.getItem("userToken")) && Boolean(localStorage.getItem("username")) && Boolean(localStorage.getItem("userAvatar"))
   const [loggedIn, setLoggedIn] = useState(exist)
-
   return (
     <BrowserRouter>
       <Header loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
@@ -21,6 +23,7 @@ function MainComponent() {
         <Route path='/' element={loggedIn ? <Home /> : <HomeGuest />} />
         <Route path='/about-us' element={<About />} />
         <Route path='/terms' element={<Terms />} />
+        <Route path='/create-post' element={<CreatePost />} />
       </Routes>
       <Footer />
     </BrowserRouter>
