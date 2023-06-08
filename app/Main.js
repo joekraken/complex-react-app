@@ -14,6 +14,7 @@ import Terms from "./components/Terms"
 import CreatePost from "./components/CreatePost"
 import ViewSinglePost from "./components/ViewSinglePost"
 import FlashMessages from "./components/FlashMessages"
+import ExampleContext from "./ExampleContext"
 
 function MainComponent() {
   const exist = Boolean(localStorage.getItem("userToken")) && Boolean(localStorage.getItem("username")) && Boolean(localStorage.getItem("userAvatar"))
@@ -25,18 +26,20 @@ function MainComponent() {
   }
 
   return (
-    <BrowserRouter>
-      <FlashMessages messages={flashMessages} />
-      <Header loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
-      <Routes>
-        <Route path='/' element={loggedIn ? <Home /> : <HomeGuest />} />
-        <Route path='/create-post' element={<CreatePost addFlashMessage={addFlashMessage} />} />
-        <Route path='/post/:id' element={<ViewSinglePost />} />
-        <Route path='/about-us' element={<About />} />
-        <Route path='/terms' element={<Terms />} />
-      </Routes>
-      <Footer />
-    </BrowserRouter>
+    <ExampleContext.Provider value={{ addFlashMessage, setLoggedIn }}>
+      <BrowserRouter>
+        <FlashMessages messages={flashMessages} />
+        <Header loggedIn={loggedIn} />
+        <Routes>
+          <Route path='/' element={loggedIn ? <Home /> : <HomeGuest />} />
+          <Route path='/create-post' element={<CreatePost />} />
+          <Route path='/post/:id' element={<ViewSinglePost />} />
+          <Route path='/about-us' element={<About />} />
+          <Route path='/terms' element={<Terms />} />
+        </Routes>
+        <Footer />
+      </BrowserRouter>
+    </ExampleContext.Provider>
   )
 }
 

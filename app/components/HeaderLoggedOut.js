@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import Axios from "axios"
+import ExampleContext from "../ExampleContext"
 
 function HeaderLoggedOut(props) {
   const [username, setUsername] = useState()
   const [password, setPassword] = useState()
+  const { setLoggedIn } = useContext(ExampleContext)
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -13,7 +15,7 @@ function HeaderLoggedOut(props) {
         localStorage.setItem("userToken", response.data.token)
         localStorage.setItem("username", response.data.username)
         localStorage.setItem("userAvatar", response.data.avatar)
-        props.setLoggedIn(true)
+        setLoggedIn(true)
       } else {
         console.log("Error: incorrect username and/or password")
       }
