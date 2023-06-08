@@ -12,10 +12,10 @@ function HeaderLoggedOut(props) {
     try {
       const response = await Axios.post("/login", { username, password })
       if (response.data) {
-        localStorage.setItem("userToken", response.data.token)
-        localStorage.setItem("username", response.data.username)
-        localStorage.setItem("userAvatar", response.data.avatar)
-        appDispatch({ type: "login" })
+        // localStorage.setItem("userToken", response.data.token)
+        // localStorage.setItem("username", response.data.username)
+        // localStorage.setItem("userAvatar", response.data.avatar)
+        appDispatch({ type: "login", userData: response.data })
       } else {
         console.log("Error: incorrect username and/or password")
       }

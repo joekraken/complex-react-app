@@ -1,5 +1,6 @@
-import React, { useState, useReducer } from "react"
+import React, { useState, useReducer, useEffect } from "react"
 import ReactDOM from "react-dom/client"
+import { useImmerReducer } from "use-immer"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import Axios from "axios"
 Axios.defaults.baseURL = "http://localhost:8080"
@@ -20,23 +21,45 @@ import DispatchContext from "./DispatchContext"
 function MainComponent() {
   const initialState = {
     loggedIn: Boolean(localStorage.getItem("userToken")) && Boolean(localStorage.getItem("username")) && Boolean(localStorage.getItem("userAvatar")),
-    flashMessages: []
+    flashMessages: [],
+    user: {
+      token: localStorage.getItem("userToken"),
+      username: localStorage.getItem("username"),
+      avatar: localStorage.getItem("userAvatar")
+    }
   }
 
-  function ourReducer(state, action) {
+  // immer passes a draft copy of the state
+  function ourReducer(draft, action) {
     switch (action.type) {
       case "login":
-        return { loggedIn: true, flashMessages: state.flashMessages }
+        draft.loggedIn = true
+        draft.user = action.userData
+        break
       case "logout":
-        return { loggedIn: false, flashMessages: state.flashMessages }
+        draft.loggedIn = false
+        break
       case "flashMessage":
-        return { loggedIn: state.loggedIn, flashMessages: state.flashMessages.concat(action.value) }
+        draft.flashMessages.push(action.value)
       default:
         break
     }
   }
 
-  const [state, dispatch] = useReducer(ourReducer, initialState)
+  const [state, dispatch] = useImmerReducer(ourReducer, initialState)
+
+  // listen to changes to state.loggedIn
+  useEffect(() => {
+    if (state.loggedIn) {
+      localStorage.setItem("userToken", state.user.token)
+      localStorage.setItem("username", state.user.username)
+      localStorage.setItem("userAvatar", state.user.avatar)
+    } else {
+      localStorage.removeItem("userToken")
+      localStorage.removeItem("username")
+      localStorage.removeItem("userAvatar")
+    }
+  }, [state.loggedIn])
 
   return (
     <StateContext.Provider value={state}>
