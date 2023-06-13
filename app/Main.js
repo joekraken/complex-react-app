@@ -4,6 +4,8 @@ import { useImmerReducer } from "use-immer"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import Axios from "axios"
 Axios.defaults.baseURL = "http://localhost:8080"
+import StateContext from "./StateContext"
+import DispatchContext from "./DispatchContext"
 
 // custom React components
 import Header from "./components/Header"
@@ -15,8 +17,7 @@ import Terms from "./components/Terms"
 import CreatePost from "./components/CreatePost"
 import ViewSinglePost from "./components/ViewSinglePost"
 import FlashMessages from "./components/FlashMessages"
-import StateContext from "./StateContext"
-import DispatchContext from "./DispatchContext"
+import Profile from "./components/Profile"
 
 function MainComponent() {
   const initialState = {
@@ -69,6 +70,7 @@ function MainComponent() {
           <Header />
           <Routes>
             <Route path='/' element={state.loggedIn ? <Home /> : <HomeGuest />} />
+            <Route path='/profile/:username/*' element={<Profile />} />
             <Route path='/create-post' element={<CreatePost />} />
             <Route path='/post/:id' element={<ViewSinglePost />} />
             <Route path='/about-us' element={<About />} />
