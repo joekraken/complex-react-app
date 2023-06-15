@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react"
 import Page from "./Page"
 import { Link, useParams } from "react-router-dom"
 import Axios from "axios"
+import LoadingDotsIcon from "./LoadingDotsIcon"
 
 function ViewSinglePost(props) {
   const { id } = useParams()
@@ -25,7 +26,7 @@ function ViewSinglePost(props) {
   if (isLoading)
     return (
       <Page title='...'>
-        <div>Loading...</div>
+        <LoadingDotsIcon />
       </Page>
     )
 
