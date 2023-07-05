@@ -10,9 +10,12 @@ function ProfilePosts(props) {
 
   // run on initial load when 2nd param is empty [] array
   useEffect(() => {
+    // use an abort controller to cancel an Axios request, if React component is unmounted
+    const requestController = new AbortController()
+
     async function fetchPosts() {
       try {
-        const response = await Axios.get(`/profile/${username}/posts`)
+        const response = await Axios.get(`/profile/${username}/posts`, { signal: requestController.signal })
         setPosts(response.data)
         setIsLoading(false)
       } catch (e) {
@@ -21,6 +24,10 @@ function ProfilePosts(props) {
       }
     }
     fetchPosts()
+    // return a clean up function, when component is unmounted (not rendered)
+    return () => {
+      requestController.abort()
+    }
   }, [])
 
   // check if posts are loading or retrieved from db

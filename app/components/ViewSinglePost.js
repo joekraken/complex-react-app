@@ -10,17 +10,25 @@ function ViewSinglePost(props) {
   const [post, setPost] = useState()
 
   useEffect(() => {
+    // (deprecated) cancel token to access Axios request
+    // const ourRequest = Axios.CancelToken.source()
+    const requestController = new AbortController()
+
     async function fetchPost() {
       try {
-        const response = await Axios.get(`/post/${id}`)
+        const response = await Axios.get(`/post/${id}`, { signal: requestController.signal })
         setPost(response.data)
         setIsLoading(false)
       } catch (e) {
-        console.log("ERROR: there is a problem")
+        console.log("ERROR: there is a problem or request canceled")
         console.log(e)
       }
     }
     fetchPost()
+    // return a clean up function, when component is unmounted (not rendered)
+    return () => {
+      requestController.abort()
+    }
   }, [])
   // check if waiting for server response
   if (isLoading)

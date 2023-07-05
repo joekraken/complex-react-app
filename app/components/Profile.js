@@ -16,11 +16,13 @@ function Profile(props) {
   })
 
   useEffect(() => {
-    // useEffect doesnt accept async functions,
+    // use an abort controller to cancel an Axios request, if React component is unmounted
+    const requestController = new AbortController()
+    // useEffect doesn't accept async functions
     // so, create & execute within passed function
     async function fetchData() {
       try {
-        const response = await Axios.post(`/profile/${username}`, { token: appState.user.token })
+        const response = await Axios.post(`/profile/${username}`, { token: appState.user.token, signal: requestController.signal })
         setProfileData(response.data)
       } catch (e) {
         console.log("ERROR: an issue happened")
@@ -28,6 +30,10 @@ function Profile(props) {
       }
     }
     fetchData()
+    // return a clean up function, when component is unmounted (not rendered)
+    return () => {
+      requestController.abort()
+    }
   }, [])
   return (
     <Page title='Profile Screen'>
