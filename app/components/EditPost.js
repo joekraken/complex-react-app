@@ -1,13 +1,15 @@
 import React, { useContext, useEffect, useState } from "react"
 import Page from "./Page"
-import { Link, useParams } from "react-router-dom"
+import { Link, useParams, useNavigate } from "react-router-dom"
 import Axios from "axios"
 import LoadingDotsIcon from "./LoadingDotsIcon"
 import { useImmerReducer } from "use-immer"
 import StateContext from "../StateContext"
 import DispatchContext from "../DispatchContext"
+import NotFound from "./NotFound"
 
-function ViewSinglePost(props) {
+function EditPost(props) {
+  const navigate = useNavigate()
   // global state and dispatch
   const appState = useContext(StateContext)
   const appDispatch = useContext(DispatchContext)
@@ -26,7 +28,8 @@ function ViewSinglePost(props) {
     isLoading: true,
     isSaving: false,
     id: useParams().id,
-    sendCount: 0
+    sendCount: 0,
+    notFound: false
   }
   // listen and perform actions on page
   function ourReducer(draft, action) {
@@ -70,6 +73,9 @@ function ViewSinglePost(props) {
           draft.body.message = "Body content must be provided."
         }
         return
+      case "notFound":
+        draft.notFound = true
+        return
       default:
         break
     }
@@ -87,7 +93,17 @@ function ViewSinglePost(props) {
     async function fetchPost() {
       try {
         const response = await Axios.get(`/post/${state.id}`, { signal: requestController.signal })
-        dispatch({ type: "fetchComplete", data: response.data })
+        // check if post exists
+        if (response.data) {
+          dispatch({ type: "fetchComplete", data: response.data })
+          // check user is owner of this post
+          if (appState.user.username != response.data.author.username) {
+            appDispatch({ type: "flashMessage", value: "You lack permission to edit that post." })
+            navigate("/")
+          }
+        } else {
+          dispatch({ type: "notFound" })
+        }
       } catch (e) {
         console.log("ERROR: there is a problem or request canceled")
         console.log(e)
@@ -127,6 +143,10 @@ function ViewSinglePost(props) {
     // brackets [],  run when sendCount changes
   }, [state.sendCount])
 
+  // check if page not found 404 error
+  if (state.notFound) {
+    return <NotFound />
+  }
   // check if waiting for server response
   if (state.isLoading)
     return (
@@ -147,7 +167,10 @@ function ViewSinglePost(props) {
 
   return (
     <Page title='Edit Post'>
-      <form onSubmit={submitHandler}>
+      <Link className='small font-weight-bold' to={`/post/${state.id}`}>
+        &laquo; Back to post permalink
+      </Link>
+      <form className='mt-3' onSubmit={submitHandler}>
         <div className='form-group'>
           <label htmlFor='post-title' className='text-muted mb-1'>
             <small>Title</small>
@@ -170,4 +193,4 @@ function ViewSinglePost(props) {
   )
 }
 
-export default ViewSinglePost
+export default EditPost

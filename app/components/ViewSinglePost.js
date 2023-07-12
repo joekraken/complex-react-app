@@ -5,6 +5,7 @@ import Axios from "axios"
 import LoadingDotsIcon from "./LoadingDotsIcon"
 import ReactMarkdown from "react-markdown"
 import { Tooltip as ReactTooltip } from "react-tooltip"
+import NotFound from "./NotFound"
 
 function ViewSinglePost(props) {
   const { id } = useParams()
@@ -32,6 +33,11 @@ function ViewSinglePost(props) {
       requestController.abort()
     }
   }, [])
+
+  if (!isLoading && !post) {
+    return <NotFound />
+  }
+
   // check if waiting for server response
   if (isLoading)
     return (
