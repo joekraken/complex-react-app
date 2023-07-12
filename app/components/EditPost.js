@@ -99,7 +99,7 @@ function EditPost(props) {
           // check user is owner of this post
           if (appState.user.username != response.data.author.username) {
             appDispatch({ type: "flashMessage", value: "You lack permission to edit that post." })
-            navigate("/")
+            navigate("/") // redirect to homepage
           }
         } else {
           dispatch({ type: "notFound" })
