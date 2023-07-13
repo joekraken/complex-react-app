@@ -39,7 +39,7 @@ function ViewSinglePost(props) {
     return () => {
       requestController.abort()
     }
-  }, [])
+  }, [id])
 
   if (!isLoading && !post) {
     return <NotFound />
