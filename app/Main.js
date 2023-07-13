@@ -2,6 +2,7 @@ import React, { useState, useReducer, useEffect } from "react"
 import ReactDOM from "react-dom/client"
 import { useImmerReducer } from "use-immer"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { CSSTransition } from "react-transition-group"
 import Axios from "axios"
 Axios.defaults.baseURL = "http://localhost:8080"
 import StateContext from "./StateContext"
@@ -20,6 +21,7 @@ import FlashMessages from "./components/FlashMessages"
 import Profile from "./components/Profile"
 import EditPost from "./components/EditPost"
 import NotFound from "./components/NotFound"
+import Search from "./components/Search"
 
 function MainComponent() {
   const initialState = {
@@ -29,7 +31,8 @@ function MainComponent() {
       token: localStorage.getItem("userToken"),
       username: localStorage.getItem("username"),
       avatar: localStorage.getItem("userAvatar")
-    }
+    },
+    isSearchOpen: false
   }
 
   // immer passes a draft copy of the state
@@ -38,14 +41,21 @@ function MainComponent() {
       case "login":
         draft.loggedIn = true
         draft.user = action.userData
-        break
+        return
       case "logout":
         draft.loggedIn = false
-        break
+        return
       case "flashMessage":
         draft.flashMessages.push(action.value)
+        return
+      case "openSearch":
+        draft.isSearchOpen = true
+        return
+      case "closeSearch":
+        draft.isSearchOpen = false
+        return
       default:
-        break
+        return
     }
   }
 
@@ -80,6 +90,9 @@ function MainComponent() {
             <Route path='/terms' element={<Terms />} />
             <Route path='*' element={<NotFound />} />
           </Routes>
+          <CSSTransition timeout={400} in={state.isSearchOpen} classNames={"search-overlay"} unmountOnExit>
+            <Search />
+          </CSSTransition>
           <Footer />
         </BrowserRouter>
       </DispatchContext.Provider>
