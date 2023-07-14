@@ -39,6 +39,7 @@ function ProfileFollow(props) {
   else {
     // check if length of follows user array
     if (follows.length > 0) {
+      // return user list to render on the DOM
       return (
         <div className='list-group'>
           {follows.map((follow, index) => {
@@ -51,7 +52,7 @@ function ProfileFollow(props) {
         </div>
       )
     } else {
-      // else the follows user array is empty
+      // else the follows user array is empty, return a message
       return (
         <div className='list-group-item text-muted text-center'>
           {action == "followers" && (appState.user.username == username ? "You have " : "This user has ") + "no followers."}
