@@ -28,7 +28,7 @@ function ProfilePosts(props) {
     return () => {
       requestController.abort()
     }
-  }, [])
+  }, [username])
 
   // check if posts are loading or retrieved from db
   if (isLoading) return <LoadingDotsIcon />
