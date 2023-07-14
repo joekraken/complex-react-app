@@ -22,7 +22,7 @@ function Profile(props) {
     }
   })
 
-  // retrieve user profiel data, posts, and following
+  // retrieve user profile data, posts, and following
   useEffect(() => {
     // use an abort controller to cancel an Axios request, if React component is unmounted
     const requestController = new AbortController()
