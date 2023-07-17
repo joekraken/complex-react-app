@@ -1,7 +1,10 @@
 import React, { useEffect, useContext, useRef } from "react"
+import { Link } from "react-router-dom"
 import StateContext from "../StateContext"
 import DispatchContext from "../DispatchContext"
 import { useImmer } from "use-immer"
+import io from "socket.io-client"
+const socket = io("http://localhost:8080")
 
 function Chat(props) {
   const chatInputField = useRef(null)
@@ -19,6 +22,15 @@ function Chat(props) {
     }
   }, [appState.isChatOpen])
 
+  useEffect(() => {
+    // listen for broadcast from server
+    socket.on("chatFromServer", message => {
+      setState(draft => {
+        draft.chatMessages.push(message)
+      })
+    })
+  }, [])
+
   // save each user keystroke to state
   function handleFieldChange(e) {
     // store input field value, to ensure it is accessible in setState()
@@ -31,7 +43,9 @@ function Chat(props) {
   // submit chat message
   function handleSubmit(e) {
     e.preventDefault()
-    // send message to chat server
+    // send a message to chat server
+    socket.emit("chatFromBrowser", { message: state.fieldValue, token: appState.user.token })
+
     setState(draft => {
       // add new message to state
       draft.chatMessages.push({ message: draft.fieldValue, username: appState.user.username, avatar: appState.user.avatar })
@@ -62,14 +76,14 @@ function Chat(props) {
           }
           return (
             <div className='chat-other'>
-              <a href='#'>
+              <Link to={`/profile/${message.username}`}>
                 <img className='avatar-tiny' src={message.avatar} />
-              </a>
+              </Link>
               <div className='chat-message'>
                 <div className='chat-message-inner'>
-                  <a href='#'>
-                    <strong>{message.username}:</strong>
-                  </a>
+                  <Link to={`/profile/${message.username}`}>
+                    <strong>{message.username}: </strong>
+                  </Link>
                   {message.message}
                 </div>
               </div>
