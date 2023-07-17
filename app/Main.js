@@ -22,6 +22,7 @@ import Profile from "./components/Profile"
 import EditPost from "./components/EditPost"
 import NotFound from "./components/NotFound"
 import Search from "./components/Search"
+import Chat from "./components/Chat"
 
 function MainComponent() {
   const initialState = {
@@ -32,7 +33,8 @@ function MainComponent() {
       username: localStorage.getItem("username"),
       avatar: localStorage.getItem("userAvatar")
     },
-    isSearchOpen: false
+    isSearchOpen: false,
+    isChatOpen: false
   }
 
   // immer passes a draft copy of the state
@@ -53,6 +55,12 @@ function MainComponent() {
         return
       case "closeSearch":
         draft.isSearchOpen = false
+        return
+      case "toggleChat":
+        draft.isChatOpen = !draft.isChatOpen
+        return
+      case "closeChat":
+        draft.isChatOpen = false
         return
       default:
         return
@@ -93,6 +101,7 @@ function MainComponent() {
           <CSSTransition timeout={400} in={state.isSearchOpen} classNames={"search-overlay"} unmountOnExit>
             <Search />
           </CSSTransition>
+          <Chat />
           <Footer />
         </BrowserRouter>
       </DispatchContext.Provider>
