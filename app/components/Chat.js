@@ -8,6 +8,7 @@ const socket = io("http://localhost:8080")
 
 function Chat(props) {
   const chatInputField = useRef(null)
+  const chatLog = useRef(null)
   // global app state & dispatch
   const appState = useContext(StateContext)
   const appDispatch = useContext(DispatchContext)
@@ -17,8 +18,10 @@ function Chat(props) {
   })
 
   useEffect(() => {
+    // focus cursor on open chat window
     if (appState.isChatOpen) {
       chatInputField.current.focus()
+      appDispatch({ type: "clearUnreadChatCount" })
     }
   }, [appState.isChatOpen])
 
@@ -30,6 +33,14 @@ function Chat(props) {
       })
     })
   }, [])
+
+  useEffect(() => {
+    // scroll to bottom of chat when, new messages added
+    chatLog.current.scrollTop = chatLog.current.scrollHeight
+    if (state.chatMessages.length && !appState.isChatOpen) {
+      appDispatch({ type: "incrementUnreadChatCount" })
+    }
+  }, [state.chatMessages])
 
   // save each user keystroke to state
   function handleFieldChange(e) {
@@ -62,11 +73,11 @@ function Chat(props) {
           <i className='fas fa-times-circle'></i>
         </span>
       </div>
-      <div id='chat' className='chat-log'>
+      <div id='chat' className='chat-log' ref={chatLog}>
         {state.chatMessages.map((message, index) => {
           if (message.username == appState.user.username) {
             return (
-              <div id={index} className='chat-self'>
+              <div key={index} className='chat-self'>
                 <div className='chat-message'>
                   <div className='chat-message-inner'>{message.message}</div>
                 </div>
@@ -75,7 +86,7 @@ function Chat(props) {
             )
           }
           return (
-            <div className='chat-other'>
+            <div key={index} className='chat-other'>
               <Link to={`/profile/${message.username}`}>
                 <img className='avatar-tiny' src={message.avatar} />
               </Link>

@@ -34,7 +34,8 @@ function MainComponent() {
       avatar: localStorage.getItem("userAvatar")
     },
     isSearchOpen: false,
-    isChatOpen: false
+    isChatOpen: false,
+    unreadChatCount: 0
   }
 
   // immer passes a draft copy of the state
@@ -61,6 +62,12 @@ function MainComponent() {
         return
       case "closeChat":
         draft.isChatOpen = false
+        return
+      case "incrementUnreadChatCount":
+        draft.unreadChatCount++
+        return
+      case "clearUnreadChatCount":
+        draft.unreadChatCount = 0
         return
       default:
         return
