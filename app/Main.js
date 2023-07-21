@@ -43,7 +43,7 @@ function MainComponent() {
     switch (action.type) {
       case "login":
         draft.loggedIn = true
-        draft.user = action.userData
+        draft.user = action.data
         return
       case "logout":
         draft.loggedIn = false
@@ -88,6 +88,29 @@ function MainComponent() {
       localStorage.removeItem("userAvatar")
     }
   }, [state.loggedIn])
+
+  // check if token has expired, on first app render
+  useEffect(() => {
+    if (state.loggedIn) {
+      const requestController = new AbortController()
+      async function fetchResults() {
+        try {
+          const response = await Axios.post("/checkToken", { token: state.user.token }, { signal: requestController.signal })
+          // if false, then token is invalid
+          if (!response.data) {
+            dispatch({ type: "logout" })
+            dispatch({ type: "flashMessage", value: "Your session has expired. Please log in again." })
+          }
+        } catch (e) {
+          console.log("Error occured fetching search results.")
+          console.log(e)
+        }
+      }
+      fetchResults()
+      // clean up
+      return () => requestController.abort()
+    }
+  }, [])
 
   return (
     <StateContext.Provider value={state}>

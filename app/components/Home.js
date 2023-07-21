@@ -37,11 +37,10 @@ function Home() {
       requestController.abort()
     }
   }, [])
-  console.log(state.isLoading)
 
   // check if feed is loading or retrieved from db
   if (state.isLoading) return <LoadingDotsIcon />
-  console.log(state.isLoading)
+
   return (
     <Page title='your feed'>
       {state.feed.length > 0 && (

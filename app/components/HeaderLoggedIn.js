@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import DispatchContext from "../DispatchContext"
 import StateContext from "../StateContext"
 import { Tooltip as ReactTooltip } from "react-tooltip"
@@ -7,9 +7,12 @@ import { Tooltip as ReactTooltip } from "react-tooltip"
 function HeaderLoggedIn(props) {
   const appDispatch = useContext(DispatchContext)
   const appState = useContext(StateContext)
+  const navigate = useNavigate()
 
   function handleLogout() {
     appDispatch({ type: "logout" })
+    appDispatch({ type: "flashMessage", value: "You are successfully logged out." })
+    navigate("/")
   }
 
   // request global dispatch to open the search component
