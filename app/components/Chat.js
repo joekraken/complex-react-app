@@ -4,9 +4,9 @@ import StateContext from "../StateContext"
 import DispatchContext from "../DispatchContext"
 import { useImmer } from "use-immer"
 import io from "socket.io-client"
-const socket = io("http://localhost:8080")
 
 function Chat(props) {
+  const socket = useRef(null)
   const chatInputField = useRef(null)
   const chatLog = useRef(null)
   // global app state & dispatch
@@ -26,12 +26,17 @@ function Chat(props) {
   }, [appState.isChatOpen])
 
   useEffect(() => {
+    // open socket connection
+    socket.current = io("http://localhost:8080")
     // listen for broadcast from server
-    socket.on("chatFromServer", message => {
+    socket.current.on("chatFromServer", message => {
       setState(draft => {
         draft.chatMessages.push(message)
       })
     })
+
+    // clean up, close socket connection
+    return () => socket.current.disconnect()
   }, [])
 
   useEffect(() => {
@@ -55,7 +60,7 @@ function Chat(props) {
   function handleSubmit(e) {
     e.preventDefault()
     // send a message to chat server
-    socket.emit("chatFromBrowser", { message: state.fieldValue, token: appState.user.token })
+    socket.current.emit("chatFromBrowser", { message: state.fieldValue, token: appState.user.token })
 
     setState(draft => {
       // add new message to state
